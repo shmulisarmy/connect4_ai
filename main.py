@@ -1,4 +1,4 @@
-import pygame as pg
+import pygame as pg, time, sys
 
 def display_board():
     for i, row in enumerate(board):
@@ -37,38 +37,52 @@ def tie():
         
     return True
 
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-YELLOW = (0, 255, 50)
-piece_size = 20
-width, height = piece_size*7, piece_size*7
-window = pg.display.set_mode((width, height))
-board_image = pg.image.load('board.png')                    
-row_heights = [5 for _ in range(7)]
-board = [[' ' for _ in range(7)] for _ in range(6)]
-player = 'X'
-
-while True:
-    mx, my = pg.mouse.get_pos()
-
-    row = mx//piece_size
-
+def drawing_logic():
     window.fill('blue')
     display_board()
     other_displays(row)
     pg.display.update()
 
+def new_game():
+    return ([5 for _ in range(7)], [[' ' for _ in range(7)] for _ in range(6)])
 
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            pg.quit()
-        if event.type == pg.MOUSEBUTTONDOWN:
-            if row_heights[row] >= 0:
-                board[row_heights[row]][row] = player
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+YELLOW = (0, 255, 50)
+piece_size = 70
+if len(sys.argv) > 1:
+    try:
+        if 20 <= int(sys.argv[1]) <= 110:
+            piece_size = int(sys.argv[1])
+    except:
+        pass
+width, height = piece_size*7, piece_size*7
+window = pg.display.set_mode((width, height))
+row_heights = [5 for _ in range(7)]
+board = [[' ' for _ in range(7)] for _ in range(6)]
+player = 'X'
 
-                if win(row_heights[row], row, player):
-                    display_board()
-                    print("Player", player, "wins!")
-    
-                row_heights[row] -= 1
-                player = 'X' if player == 'O' else 'O'
+if __name__ == "__main__":
+    while True:
+        mx, my = pg.mouse.get_pos()
+        row = mx//piece_size
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if row_heights[row] >= 0:
+                    board[row_heights[row]][row] = player
+
+                    if win(row_heights[row], row, player):
+                        drawing_logic()
+                        print("Player", player, "wins!")
+                        time.sleep(1)
+                        row_heights, board =  new_game()
+        
+                    else:
+                        row_heights[row] -= 1
+                        player = 'X' if player == 'O' else 'O'
+
+        drawing_logic()
+        print(row_heights)
