@@ -74,7 +74,13 @@ if __name__ == "__main__":
                 pg.quit()
             if event.type == pg.MOUSEBUTTONDOWN:
                 if row_heights[row] >= 0:
-                    board[row_heights[row]][row] = player
+                    for i in range(0, row_heights[row] + 1):
+                        board[i][row] = player
+                        drawing_logic()
+                        time.sleep(.01)
+                        if i == row_heights[row]:
+                            break
+                        board[i][row] = ' '
 
                     if win(row_heights[row], row, player):
                         drawing_logic()
