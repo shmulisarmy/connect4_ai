@@ -1,4 +1,17 @@
-import pygame as pg, time, sys
+import pygame as pg, time, sys, colorama
+
+def pb():
+    for row in board:
+        print('\n' + '-'*29, end = '\n| ')
+        for col in row:
+            if col == 'X':
+                print(colorama.Fore.GREEN + col + colorama.Fore.RESET, end = ' | ')
+            elif col == 'O':
+                print(colorama.Fore.RED + col + colorama.Fore.RESET, end = ' | ')
+            else:
+                print(end = '  | ')
+    print('\n' + '-'*29)
+
 
 def display_board():
     for i, row in enumerate(board):
@@ -38,6 +51,8 @@ def tie():
     return True
 
 def drawing_logic():
+    pb()
+
     window.fill('blue')
     display_board()
     other_displays(row)
@@ -75,7 +90,7 @@ if __name__ == "__main__":
                     for i in range(0, row_heights[row] + 1):
                         board[i][row] = player
                         drawing_logic()
-                        time.sleep(.03)
+                        time.sleep(.06)
                         if i == row_heights[row]:
                             break
                         board[i][row] = ' '
