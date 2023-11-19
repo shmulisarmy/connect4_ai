@@ -69,10 +69,13 @@ if __name__ == "__main__":
         mx, my = pg.mouse.get_pos()
         row = mx//piece_size
 
+        keys = pg.key.get_pressed()
+
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
-            if event.type == pg.MOUSEBUTTONDOWN:
+            if event.type == pg.MOUSEBUTTONDOWN or keys[pg.K_SPACE]:
+                time.sleep(0.1)
                 if row_heights[row] >= 0:
                     for i in range(0, row_heights[row] + 1):
                         board[i][row] = player
