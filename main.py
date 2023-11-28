@@ -34,10 +34,10 @@ def win(height, row, cur_player):
     dhdr = [(0, 1), (1, 0), (1, 1), (-1, 1)]
     for dh, dr in dhdr:
         connections = 0
-        for i in range(-3, 4):
-            if -1 < height + dh*i < 6 and -1 < row + dr*i < 7 and board[height + dh*i][row + dr*i] == cur_player:
+        for i in range(-4, 5):
+            if -1 < height + dh*i < 8 and -1 < row + dr*i < 8 and board[height + dh*i][row + dr*i] == cur_player:
                 connections += 1
-                if connections == 4:
+                if connections == 5:
                     return True
             else:
                 connections = 0
@@ -59,39 +59,47 @@ def drawing_logic():
     pg.display.update()
 
 def new_game():
-    return ([5 for _ in range(7)], [[' ' for _ in range(7)] for _ in range(6)])
+    return ([7 for _ in range(8)], [[' ' for _ in range(8)] for _ in range(8)], True)
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 YELLOW = (0, 255, 50)
-piece_size = 70
+piece_size = 80
 if len(sys.argv) > 1:
     try:
         if 20 <= int(sys.argv[1]) <= 110:
             piece_size = int(sys.argv[1])
     except:
         pass
-width, height = piece_size*7, piece_size*7
+width, height = piece_size*8, piece_size*9
 window = pg.display.set_mode((width, height))
-row_heights = [5 for _ in range(7)]
-board = [[' ' for _ in range(7)] for _ in range(6)]
+pg.display.set_caption('connect5')
+row_heights = [7 for _ in range(8)]
+board = [[' ' for _ in range(8)] for _ in range(8)]
 player = 'X'
+one_piece_to_go = True
 
 if __name__ == "__main__":
     while True:
         mx, my = pg.mouse.get_pos()
         row = mx//piece_size
 
+        keys = pg.key.get_pressed()
+
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
-            if event.type == pg.MOUSEBUTTONDOWN:
+            if event.type == pg.MOUSEBUTTONDOWN or keys[pg.K_SPACE]:
+                time.sleep(0.1)
                 if row_heights[row] >= 0:
                     for i in range(0, row_heights[row] + 1):
                         board[i][row] = player
                         drawing_logic()
+
+
                         time.sleep(.06)
-                        if i == row_heights[row]:
+
+                          if i == row_heights[row]:
                             break
                         board[i][row] = ' '
 
@@ -99,10 +107,14 @@ if __name__ == "__main__":
                         drawing_logic()
                         print("Player", player, "wins!")
                         time.sleep(1)
-                        row_heights, board =  new_game()
+                        row_heights, board, one_piece_to_go =  new_game()
         
                     else:
                         row_heights[row] -= 1
-                        player = 'X' if player == 'O' else 'O'
+                        if one_piece_to_go:
+                            player = 'X' if player == 'O' else 'O'
+                            one_piece_to_go = False
+                        else:
+                            one_piece_to_go = True
 
         drawing_logic()
